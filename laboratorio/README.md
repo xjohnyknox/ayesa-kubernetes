@@ -99,7 +99,7 @@ kubectl get pods -A
 | Versión Kubernetes       | **1.32**                   |
 | Control Plane            | **2 CPU**, **2 GB RAM**    |
 | Nodo Worker              | **2 CPU**, **2 GB RAM**    |
-| Runtime de contenedores  | **containerd**             |
+| Runtime de contenedores  | **cri-o**             |
 | Plugin de red            | **Calico**                 |
 | StorageClass por defecto | **Local Path Provisioner** |
 
