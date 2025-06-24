@@ -1,0 +1,7 @@
+# Vagrant files
+.vagrant/
+**/.vagrant/
+
+# Kubernetes config files
+**/kubeconfig.yaml
+
