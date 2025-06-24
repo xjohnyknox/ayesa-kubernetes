@@ -5,3 +5,5 @@
 # Kubernetes config files
 **/kubeconfig.yaml
 
+## Configs al desplegar el proyecto con vagrant
+**/.configs/

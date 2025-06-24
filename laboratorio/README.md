@@ -72,10 +72,10 @@ kubectl get pods -A
 
 ## 💻 Usar el clúster desde tu máquina host
 
-1. Copia el **kubeconfig** desde el control plane:
+1. Copia el **kubeconfig** desde el nodo control plane (estando parado en el directorio de laboratorio):
 
    ```bash
-   vagrant ssh control-plane -c "sudo cat /etc/kubernetes/admin.conf" > kubeconfig.yaml
+   vagrant ssh controlplane -c "sudo cat /etc/kubernetes/admin.conf" > kubeconfig.yaml
    ```
 
 2. Exporta la variable `KUBECONFIG`:
@@ -98,7 +98,7 @@ kubectl get pods -A
 | ------------------------ | -------------------------- |
 | Versión Kubernetes       | **1.32**                   |
 | Control Plane            | **2 CPU**, **2 GB RAM**    |
-| Nodo Worker              | **2 CPU**, **2 GB RAM**    |
+| Nodo Worker              | **1 CPU**, **2 GB RAM**    |
 | Runtime de contenedores  | **cri-o**             |
 | Plugin de red            | **Calico**                 |
 | StorageClass por defecto | **Local Path Provisioner** |
@@ -112,6 +112,6 @@ kubectl get pods -A
 | **Detener** el clúster  | `vagrant halt`       |
 | **Arrancar** de nuevo   | `vagrant up`         |
 | **Destruir** el clúster | `vagrant destroy -f` |
-
+| **Listar** todas las VMs en tu ordenador | `vagrant global-status` |
+| **Acceder** a una VM específica | `vagrant ssh <nombre-vm>` |
 ---
-
