@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: deployment
+metadata:
+  labels:
+    app: contenedor-busybox
+  name: contenedor-busybox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contenedor-busybox
+  template:
+    metadata:
+      labels:
+        app: contenedor-busybox
+    spec:
+      containers:
+      - image: busybox888
+        name: busybox888
+        command:
+        - sh
+        - "-c"
+        - echo Hola Curso! && sleep 3600

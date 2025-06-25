@@ -1,0 +1,10 @@
+
+# AQUI VA TU CODIGO
+# Debe tener:
+# Nombre: httpd-frontend
+# Replicas: 3
+# Imagen: httpd:2.4-alpine
+# Y todo debe correr en el namespace ejercicio5
+
+# Importante, luego de hacer el ejercicio, y comprobar que funcione, 
+# elimina todos los recursos y el namespace

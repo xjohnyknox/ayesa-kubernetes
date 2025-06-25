@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: mi-app
+  name: mi-servicio
+spec:
+  ports:
+  - name: 80-30008
+    port: 80
+    protocol: TCP
+    targetPort: 80
+    nodePort: 30008
+  selector:
+    app: mi-app
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-despliegue
+  labels:
+    app: mi-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mi-app
+  template:
+    metadata:
+      labels:
+        app: mi-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
