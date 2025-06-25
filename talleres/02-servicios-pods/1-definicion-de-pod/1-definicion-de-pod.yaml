@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: miapp
+    tipo: frontend
+  name: contenedor-nginx
+spec:
+  containers:
+  - image: nginx
+    name: contenedor-nginx
