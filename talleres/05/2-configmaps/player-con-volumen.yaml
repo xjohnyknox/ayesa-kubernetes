@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: juego-configmaps-con-volumen
+spec:
+  containers:
+    - name: juego-configmaps-con-volumen
+      image: busybox:latest
+      command: [ "/bin/sh", "-c", "sleep 890980" ]
+      volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config
+  volumes:
+    - name: config-volume
+      configMap:
+        # Provide the name of the ConfigMap containing the files you want
+        # to add to the container
+        name: special-config           
+  restartPolicy: Never

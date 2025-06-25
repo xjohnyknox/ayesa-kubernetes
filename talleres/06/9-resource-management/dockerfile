@@ -1,0 +1,14 @@
+# Use the official Nginx image as the base image
+FROM nginx:latest
+
+# Update the package repositories and install essential packages
+RUN apt-get update && \
+    apt-get install -y stress && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Expose port 80 for Nginx
+EXPOSE 80
+
+# Start Nginx when the container starts
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: 2-serviceaccount-namespace
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      serviceAccountName: backend-serviceaccount  # Associate the ServiceAccount
+      containers:
+      - name: backend-container
+        image: nginx:latest

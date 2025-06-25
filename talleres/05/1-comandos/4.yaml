@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ejercicio4
+spec:
+  containers:
+  - image: ubuntu:latest
+    name: ubuntu
+    command: ["/bin/sh"]
+    args: ["-c","cat /etc/os-release"]
+  - image: debian:latest
+    name: debian
+    command: ["/bin/sh"]
+    args: ["-c","cat /etc/os-release"]
+  - image: oraclelinux:8
+    name: oraclelinux
+    command: ["/bin/sh"]
+    args: ["-c","cat /etc/os-release"]
+  restartPolicy: Never

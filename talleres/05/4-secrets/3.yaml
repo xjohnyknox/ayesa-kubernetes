@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dotfile-secret
+data:
+  .secret-file: UG9yRmluRXNWaWVybmVzCg==
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-dotfiles-pod
+spec:
+  volumes:
+  - name: secret-volume
+    secret:
+      secretName: dotfile-secret
+  containers:
+  - name: dotfile-test-container
+    image: busybox
+    command:
+    - ls
+    - "-larth"
+    - "/etc/secret-volume"
+    volumeMounts:
+    - name: secret-volume
+      readOnly: true
+      mountPath: "/etc/secret-volume"
+  - name: show-content
+    image: busybox
+    command:
+    - cat
+    - "/etc/secret-volume/.secret-file"
+    volumeMounts:
+    - name: secret-volume
+      readOnly: true
+      mountPath: "/etc/secret-volume"      

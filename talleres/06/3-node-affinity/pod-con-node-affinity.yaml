@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-con-node-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1 #Preferible, pero no mandatorio
+        preference:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - frontend
+  containers:
+  - name: busybox-container
+    image: busybox:latest
+    command:
+    - sleep
+    - "3600"

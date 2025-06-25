@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: simulador-eventos
+  name: simulador-eventos
+spec:
+  containers:
+  - image: kodekloud/event-simulator
+    name: simulador-eventos
+    volumeMounts:
+    - mountPath: /log
+      name: logs
+  volumes:
+  - name: logs
+    persistentVolumeClaim:
+      claimName: claim-simulador-eventos 
+   
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: claim-simulador-eventos
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 64Mi

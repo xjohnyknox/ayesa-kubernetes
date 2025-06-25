@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: 2-serviceaccount-namespace
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backend-serviceaccount
+  namespace: 2-serviceaccount-namespace

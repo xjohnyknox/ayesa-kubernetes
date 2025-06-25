@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-secrets
+type: Opaque
+stringData:
+  config.yaml: |-
+    apiUrl: "https://backend.api.com/api/v1"
+    username: administrador
+    password: 12345 

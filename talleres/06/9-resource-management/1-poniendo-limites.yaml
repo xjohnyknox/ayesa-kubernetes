@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: 1-poniendo-limites
+spec:
+  restartPolicy: Never
+  containers:
+  - name: 1-poniendo-limites
+    image: xjohnyx/nginx-stress:v1
+    resources:
+      requests:
+        memory: "64Mi" # Request 64 Mebibytes of memory
+        cpu: "250m"    # Request 250 milliCPU (0.25 CPU cores)
+      limits:
+        memory: "128Mi" # Limit memory to 128 Mebibytes
+        cpu: "500m"    # Limit CPU to 500 milliCPU (0.5 CPU cores)

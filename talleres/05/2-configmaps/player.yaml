@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: juego-configmaps
+spec:
+  containers:
+    - name: juego-configmaps
+      image: busybox:latest
+      command: [ "/bin/sh", "-c", "sleep 500000" ]
+      env:
+        - name: NOMBRE
+          valueFrom:
+            configMapKeyRef:
+              name: special-config
+              key: player.name
+        - name: TIPO
+          valueFrom:
+            configMapKeyRef:
+              name: special-config
+              key: player.type             
+  restartPolicy: Never
