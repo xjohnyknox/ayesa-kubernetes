@@ -61,34 +61,32 @@ kubectl patch configmap local-path-config -n local-path-storage --type merge \
 
 # Install metallb for LoadBalancer Service type
 
-# see what changes would be made, returns nonzero returncode if different
-kubectl get configmap kube-proxy -n kube-system -o yaml | \
-sed -e "s/strictARP: false/strictARP: true/" | \
-kubectl diff -f - -n kube-system
-
 # actually apply the changes, returns nonzero returncode on errors only
 kubectl get configmap kube-proxy -n kube-system -o yaml | \
 sed -e "s/strictARP: false/strictARP: true/" | \
 kubectl apply -f - -n kube-system
+echo "Updated kube-proxy configmap to enable strict ARP"
 
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml
 
-kubectl apply -f - <<EOF
-apiVersion: metallb.io/v1beta1
-kind: IPAddressPool
-metadata:
-  name: pool-ips
-  namespace: metallb-system
-spec:
-  addresses:
-  - ${METALLB_IPS}
----
-apiVersion: metallb.io/v1beta1
-kind: L2Advertisement
-metadata:
-  name: pool-ips
-  namespace: metallb-system
-spec:
-  ipAddressPools:
-  - pool-ips
-EOF
+#kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml
+#echo "Applied metallb-native.yaml successfully"
+
+# Configure metallb with IP address pool
+# sleep 60 # wait for metallb to be ready
+# echo "
+# apiVersion: metallb.io/v1beta1
+# kind: IPAddressPool
+# metadata:
+#   name: first-pool
+#   namespace: metallb-system
+# spec:
+#   addresses:
+#   - ${METALLB_IPS}
+# ---
+# apiVersion: metallb.io/v1beta1
+# kind: L2Advertisement
+# metadata:
+#   name: example
+#   namespace: metallb-system
+# " | kubectl apply -f -
+
