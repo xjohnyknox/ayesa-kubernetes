@@ -5,7 +5,6 @@ En este dia, tenemos los siguientes ejercicios:
 - [Ejercicios Dia 02.](#ejercicios-dia-02)
   - [1-definicion-de-pod](#1-definicion-de-pod)
   - [2-desplegando-wordpress](#2-desplegando-wordpress)
-  - [3-wordpress](#3-wordpress)
 
 ## 1-definicion-de-pod
 
@@ -27,7 +26,7 @@ Recordando que cada tipo de recurso en kubernetes va enlazado con la versión de
 
 ## 2-desplegando-wordpress
 
-En este ejercicio, vas a desplegar el mismo docker-compose de wordpress, PERO esta vez en modo kubernetes (PV, PVC, Deployment, servicios).
+En este ejercicio, vas a desplegar un wordpress con todos los detalles posibles (PV, PVC, Deployment, servicios).
 
 **Tip:** 
 
@@ -48,51 +47,4 @@ Comandos a utilizar:
 
 `kubectl get events`
 
-## 3-wordpress
-
-```
-cat <<EOF >./kustomization.yaml
-secretGenerator:
-- name: mysql-pass
-  literals:
-  - password=UnaNuevaContraseña
-EOF
-```
-
-Agregalos al archivo de kustomization
-
-```
-cat <<EOF >>./kustomization.yaml
-resources:
-  - mysql-deployment.yaml
-  - wordpress-deployment.yaml
-EOF
-```
-
-Aplicalos al cluster:
-
-`kubectl apply -k ./`
-
-Revisa que el secreto exista:
-
-`kubectl get secrets`
-
-Revisa que el PVC exista:
-
-`kubectl get pvc`
-
-Verifica que el pod este corriendo (RUNNING), dale unos minutos:
-
-`kubectl get pods`
-
-Revisa el servicio de wordpress:
-
-`kubectl get services wordpress`
-
-Abre la url del servicio:
-
-`minikube service wordpress --url`
-
-Una vez finalizado, elimina los recursos:
-
-`kubectl delete -k ./`
+kubectl delete -k ./`

@@ -8,3 +8,4 @@
 ## Configs al desplegar el proyecto con vagrant
 **/.configs/
 laboratorio/configs/
+.aider*
