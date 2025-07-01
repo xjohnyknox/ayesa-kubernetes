@@ -1,50 +1,67 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.26.0 (40646f47)
-  creationTimestamp: null
+  name: wordpress-deployment
+  namespace: default
   labels:
-    io.kompose.service: wordpress
-  name: wordpress
+    app: wordpress
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      io.kompose.service: wordpress
-  strategy:
-    type: Recreate
+      app: wordpress
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.26.0 (40646f47)
-      creationTimestamp: null
       labels:
-        io.kompose.service: wordpress
+        app: wordpress
     spec:
       containers:
-        - env:
-            - name: WORDPRESS_DB_HOST
-              value: db
-            - name: WORDPRESS_DB_NAME
-              value: exampledb
-            - name: WORDPRESS_DB_PASSWORD
-              value: examplepass
-            - name: WORDPRESS_DB_USER
-              value: exampleuser
-          image: wordpress
+      - name: wordpress
+        image: wordpress:6.4-apache
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mysql-service:3306
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: mysql-database
+        - name: WORDPRESS_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: mysql-user
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: mysql-password
+        ports:
+        - containerPort: 80
           name: wordpress
-          ports:
-            - containerPort: 80
-          resources: {}
-          volumeMounts:
-            - mountPath: /var/www/html
-              name: wordpress
-      restartPolicy: Always
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          timeoutSeconds: 1
       volumes:
-        - name: wordpress
-          persistentVolumeClaim:
-            claimName: wordpress
-status: {}
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
