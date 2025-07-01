@@ -1,39 +1,38 @@
-# kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-metadata:
-  name: 2-desplegando-wordpress
-  namespace: default
-
-# Lista de recursos a incluir
+# metadata:
+#   name: 2-desplegando-wordpress
+#   namespace: default
+#
+#
+#
+# labels:
+#   - pairs:
+#       project: 2-desplegando-wordpress
+#       environment: pruebas  
+#
 resources:
-  - mysql-secret.yaml
-  - mysql-pvc.yaml
-  - wordpress-pvc.yaml
-  - mysql-deployment.yaml
-  - mysql-service.yaml
-  - wordpress-deployment.yaml
-  - wordpress-service.yaml
+- mysql-deployment.yaml
+- mysql-pvc.yaml
+- mysql-secrets.yaml
+- mysql-service.yaml
+- wordpress-deployment.yaml
+- wordpress-pvc.yaml
+- wordpress-service.yaml
 
-# Etiquetas comunes para todos los recursos
-commonLabels:
-  project: wordpress-cka-practice
-  environment: learning
 
-# Prefijo para nombres de recursos (opcional)
-namePrefix: cka-
 
-# Imágenes a usar (permite cambiar versiones fácilmente)
-images:
-  - name: mysql
-    newTag: "8.0"
-  - name: wordpress
-    newTag: "6.4-apache"
+# namePrefix: cka-
 
-# Configuración de réplicas (opcional)
-replicas:
-  - name: wordpress-deployment
-    count: 2
-  - name: mysql-deployment
-    count: 1
+# images:
+#   - name: mysql
+#     newTag: "8.0"
+#   - name: wordpress
+#     newTag: "6.4-apache"
+#
+# replicas:
+#   - name: wordpress-deployment
+#     count: 2
+#   - name: mysql-deployment
+#     count: 1

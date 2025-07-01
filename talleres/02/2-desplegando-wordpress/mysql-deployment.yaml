@@ -18,6 +18,20 @@ spec:
         app: mysql
     spec:
       containers:
+      initContainers:
+      - name: mysql-data-cleaner
+        image: busybox:1.35
+        command:
+        - sh
+        - -c
+        - |
+          echo "Limpiando directorio de datos MySQL..."
+          rm -rf /var/lib/mysql/*
+          rm -rf /var/lib/mysql/.[^.]*
+          echo "Directorio limpio y listo para MySQL"
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
       - name: mysql
         image: mysql:8.0
         env:
@@ -54,28 +68,32 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
-        livenessProbe:
-          exec:
-            command:
-            - mysqladmin
-            - ping
-            - -h
-            - localhost
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-        readinessProbe:
-          exec:
-            command:
-            - mysql
-            - -h
-            - localhost
-            - -u
-            - root
-            - -p${MYSQL_ROOT_PASSWORD}
-            - -e
-            - "SELECT 1"
-          initialDelaySeconds: 10
-          timeoutSeconds: 1
+        # livenessProbe:
+        #   exec:
+        #     command:
+        #     - mysqladmin
+        #     - ping
+        #     - -h
+        #     - localhost
+        #   initialDelaySeconds: 60
+        #   timeoutSeconds: 10
+        #   periodSeconds: 10
+        #   failureThreshold: 6
+        # readinessProbe:
+        #   exec:
+        #     command:
+        #     - mysql
+        #     - -h
+        #     - localhost
+        #     - -u
+        #     - root
+        #     - -p${MYSQL_ROOT_PASSWORD}
+        #     - -e
+        #     - "SELECT 1"
+        #   initialDelaySeconds: 30
+        #   timeoutSeconds: 5
+        #   periodSeconds: 5
+        #   failureThreshold: 6
       volumes:
       - name: mysql-persistent-storage
         persistentVolumeClaim:

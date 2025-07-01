@@ -28,8 +28,8 @@ kubectl exec -n kube-system etcd-controlplane -- \
   sh -c 'ETCDCTL_API=3 etcdctl snapshot save /var/lib/etcd/backup-'$TS'.db \
   --endpoints=https://127.0.0.1:2379 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-  --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt \
-  --key=/etc/kubernetes/pki/etcd/healthcheck-client.key'
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key'
 ```
 
 El archivo de backup ahora también existe en el host en la ruta `/var/lib/etcd/backup-$TS.db`.
