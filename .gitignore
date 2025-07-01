@@ -9,3 +9,9 @@
 **/.configs/
 laboratorio/configs/
 .aider*
+
+# Ignore everything in laboratorio except essential files
+laboratorio/*
+!laboratorio/settings.yaml
+!laboratorio/Vagrantfile
+!laboratorio/scripts/
