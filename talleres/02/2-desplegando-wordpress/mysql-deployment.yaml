@@ -1,37 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-deployment
-  namespace: default
-  labels:
-    app: mysql
+  name: mysql
+  namespace: prueba-con-wordpress
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: mysql
-  strategy:
-    type: Recreate  # Important for stateful apps with persistent storage
   template:
     metadata:
       labels:
         app: mysql
     spec:
       containers:
-      initContainers:
-      - name: mysql-data-cleaner
-        image: busybox:1.35
-        command:
-        - sh
-        - -c
-        - |
-          echo "Limpiando directorio de datos MySQL..."
-          rm -rf /var/lib/mysql/*
-          rm -rf /var/lib/mysql/.[^.]*
-          echo "Directorio limpio y listo para MySQL"
-        volumeMounts:
-        - name: mysql-persistent-storage
-          mountPath: /var/lib/mysql
       - name: mysql
         image: mysql:8.0
         env:
@@ -57,44 +39,10 @@ spec:
               key: mysql-password
         ports:
         - containerPort: 3306
-          name: mysql
         volumeMounts:
-        - name: mysql-persistent-storage
+        - name: mysql-data
           mountPath: /var/lib/mysql
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        # livenessProbe:
-        #   exec:
-        #     command:
-        #     - mysqladmin
-        #     - ping
-        #     - -h
-        #     - localhost
-        #   initialDelaySeconds: 60
-        #   timeoutSeconds: 10
-        #   periodSeconds: 10
-        #   failureThreshold: 6
-        # readinessProbe:
-        #   exec:
-        #     command:
-        #     - mysql
-        #     - -h
-        #     - localhost
-        #     - -u
-        #     - root
-        #     - -p${MYSQL_ROOT_PASSWORD}
-        #     - -e
-        #     - "SELECT 1"
-        #   initialDelaySeconds: 30
-        #   timeoutSeconds: 5
-        #   periodSeconds: 5
-        #   failureThreshold: 6
       volumes:
-      - name: mysql-persistent-storage
+      - name: mysql-data
         persistentVolumeClaim:
           claimName: mysql-pvc

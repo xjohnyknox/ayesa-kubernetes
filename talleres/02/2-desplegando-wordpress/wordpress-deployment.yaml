@@ -1,12 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wordpress-deployment
-  namespace: default
-  labels:
-    app: wordpress
+  name: wordpress
+  namespace: prueba-con-wordpress
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: wordpress
@@ -17,15 +15,10 @@ spec:
     spec:
       containers:
       - name: wordpress
-        image: wordpress:6.4-apache
+        image: wordpress:6.5-apache
         env:
         - name: WORDPRESS_DB_HOST
-          value: mysql-service:3306
-        - name: WORDPRESS_DB_NAME
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: mysql-database
+          value: mysql.prueba-con-wordpress.svc.cluster.local:3306
         - name: WORDPRESS_DB_USER
           valueFrom:
             secretKeyRef:
@@ -36,32 +29,17 @@ spec:
             secretKeyRef:
               name: mysql-secret
               key: mysql-password
+        - name: WORDPRESS_DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: mysql-database
         ports:
         - containerPort: 80
-          name: wordpress
         volumeMounts:
-        - name: wordpress-persistent-storage
+        - name: wp-data
           mountPath: /var/www/html
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 80
-          initialDelaySeconds: 10
-          timeoutSeconds: 1
       volumes:
-      - name: wordpress-persistent-storage
+      - name: wp-data
         persistentVolumeClaim:
-          claimName: wordpress-pvc
+          claimName: wp-pvc

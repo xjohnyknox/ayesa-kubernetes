@@ -1,225 +1,139 @@
-# Despliegue de WordPress + MySQL en Kubernetes
+# 🚀 Despliegue de WordPress + MySQL en Kubernetes con Kustomize
 
-### 📋 Descripción del Proyecto
+Bienvenido/a. En este laboratorio aprenderás a desplegar una aplicación multi-tier real (WordPress + MySQL) en Kubernetes, usando buenas prácticas de manifiestos y almacenamiento persistente. Este ejercicio está alineado con los objetivos del examen CKA y te ayudará a practicar conceptos clave.
 
-Este proyecto despliega una aplicación completa de **WordPress** con base de datos **MySQL** en un clúster de Kubernetes utilizando **Kustomize**.
+---
 
-### 🏗️ Arquitectura de la Aplicación
-
-```
-┌─────────────────┐    ┌─────────────────┐
-│   WordPress     │────│     MySQL       │
-│   (Frontend)    │    │   (Base de      │
-│                 │    │    Datos)       │
-│ - 2 réplicas    │    │ - 1 réplica     │
-│ - Puerto 80     │    │ - Puerto 3306   │
-│ - NodePort      │    │ - ClusterIP     │
-└─────────────────┘    └─────────────────┘
-         │                       │
-         ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐
-│ WordPress PVC   │    │   MySQL PVC     │
-│   (3Gi)         │    │    (5Gi)        │
-└─────────────────┘    └─────────────────┘
-```
-
-### 📁 Estructura de Archivos
+## 📂 Estructura de los Manifiestos
 
 ```
-2-desplegando-wordpress/
-├── kustomization.yaml       # Archivo principal de Kustomize
-├── mysql-secret.yaml        # Credenciales de la base de datos
-├── mysql-pvc.yaml          # Volumen persistente para MySQL
-├── wordpress-pvc.yaml      # Volumen persistente para WordPress
-├── mysql-deployment.yaml   # Despliegue de MySQL
-├── mysql-service.yaml      # Servicio interno de MySQL
-├── wordpress-deployment.yaml # Despliegue de WordPress
-├── wordpress-service.yaml  # Servicio NodePort de WordPress
-└── README.md               # Este archivo
+talleres/02/2-desplegando-wordpress/
+├── README.md                  # Guía y explicación del laboratorio
+├── namespace.yaml             # Namespace dedicado para aislar los recursos
+├── mysql-secrets.yaml         # Secret con credenciales de MySQL
+├── mysql-pvc.yaml             # PVC para datos persistentes de MySQL
+├── mysql-deployment.yaml      # Deployment de MySQL
+├── mysql-service.yaml         # Service ClusterIP para MySQL
+├── wordpress-pvc.yaml         # PVC para archivos de WordPress
+├── wordpress-deployment.yaml  # Deployment de WordPress
+└── wordpress-service.yaml     # Service NodePort para WordPress
 ```
 
-### 🎯 Objetivos de Aprendizaje CKA
+---
 
-Al completar este ejercicio, practicarás:
+## 🎯 Objetivos de Aprendizaje
 
-- ✅ **Deployments**: Creación y gestión de aplicaciones
-- ✅ **Services**: ClusterIP y NodePort
-- ✅ **Secrets**: Manejo seguro de credenciales
-- ✅ **PersistentVolumes**: Almacenamiento persistente
-- ✅ **Kustomize**: Gestión de manifiestos
-- ✅ **Multi-tier Applications**: Aplicaciones de múltiples niveles
-- ✅ **Troubleshooting**: Resolución de problemas
+- Crear y gestionar **Namespaces** para aislar entornos.
+- Usar **Secrets** para manejar credenciales de forma segura.
+- Definir y consumir **PersistentVolumeClaims**.
+- Desplegar aplicaciones multi-tier con **Deployments** y **Services**.
+- Exponer servicios con **NodePort** y **ClusterIP**.
+- Practicar troubleshooting y comandos esenciales para el CKA.
 
-### 📦 Componentes Desplegados
+---
 
-#### 🔐 Secrets
-- **mysql-secret**: Contiene credenciales de la base de datos
-  - Usuario root: `admin123`
-  - Base de datos: `wordpress`
-  - Usuario: `wpuser`
-  - Contraseña: `wppass123`
+## 🏗️ Arquitectura de la Solución
 
-#### 💾 Persistent Volume Claims
-- **mysql-pvc**: 5Gi para datos de MySQL
-- **wordpress-pvc**: 3Gi para archivos de WordPress
-- Ambos usan el **StorageClass por defecto**
-
-#### 🗄️ MySQL Database
-- **1 réplica** (aplicación con estado)
-- **Estrategia Recreate** para almacenamiento persistente
-- **Sondas de salud** (liveness y readiness)
-- **Servicio ClusterIP** para acceso interno
-
-#### 🌐 WordPress Frontend
-- **2 réplicas** para alta disponibilidad
-- **Servicio NodePort** (puerto 30080)
-- Conecta a MySQL via `mysql-service:3306`
-- **Sondas HTTP** para verificar estado
-
-### 🚀 Instrucciones de Despliegue
-
-#### Prerequisitos
-```bash
-# Verificar versión de Kubernetes
-kubectl version --short
-
-# Verificar que Kustomize esté disponible
-kubectl kustomize --help
-
-# Verificar el StorageClass por defecto
-kubectl get storageclass
+```
+┌──────────────┐      ┌──────────────┐
+│  WordPress   │ <--> │   MySQL      │
+│  (Frontend)  │      │ (Database)   │
+└─────┬────────┘      └─────┬────────┘
+      │                     │
+┌─────▼─────┐         ┌─────▼─────┐
+│ PVC WP    │         │ PVC MySQL │
+└───────────┘         └───────────┘
 ```
 
-#### Paso 1: Verificar la Configuración de Kustomize
+- **WordPress**: 1 réplica, expuesto por NodePort (`30080`).
+- **MySQL**: 1 réplica, acceso interno por ClusterIP.
+- Ambos usan almacenamiento persistente (PVC).
+- Namespace: `prueba-con-wordpress`.
+
+---
+
+## ⚙️ Despliegue Paso a Paso
+
+### 1. Prerrequisitos
+
+- Acceso a un clúster Kubernetes funcional.
+- `kubectl` y soporte para `kustomize` (nativo en kubectl ≥1.14).
+- StorageClass por defecto configurado.
+
+### 2. Revisión de los Manifiestos
+
+Puedes revisar todos los recursos que se crearán con:
 
 ```bash
-# Ver todos los recursos que se van a crear
 kubectl kustomize .
-
-# Validar que no hay errores de sintaxis
-kubectl kustomize . --validate=true
 ```
 
-#### Paso 2: Desplegar la Aplicación
+### 3. Despliegue
+
+Aplica todos los recursos en el namespace dedicado:
 
 ```bash
-# Aplicar todos los recursos con Kustomize
 kubectl apply -k .
-
-# Verificar el estado del despliegue
-kubectl get all
 ```
 
-#### Paso 3: Monitorear el Despliegue
+### 4. Verifica el Estado
 
 ```bash
-# Ver el estado de los pods
-kubectl get pods -w
-
-# Verificar los servicios
-kubectl get svc
-
-# Verificar los PVCs
-kubectl get pvc
-
-# Ver los secrets
-kubectl get secrets
+kubectl get all -n prueba-con-wordpress
+kubectl get pvc -n prueba-con-wordpress
+kubectl get secrets -n prueba-con-wordpress
 ```
 
-### 🔍 Verificación y Acceso
+### 5. Acceso a WordPress
 
-#### Acceder a WordPress
-```bash
-# Obtener la IP del nodo
-kubectl get nodes -o wide
-
-# Acceder via navegador
-# http://<IP_DEL_NODO>:30080
-```
-
-#### Verificar Conectividad de la Base de Datos
-
-```bash
-# Conectar al pod de MySQL
-kubectl exec -it deployment/cka-mysql-deployment -- mysql -u wpuser -p
-
-# Usar la contraseña: wppass123
-# Verificar la base de datos
-mysql> SHOW DATABASES;
-mysql> USE wordpress;
-mysql> SHOW TABLES;
-```
-
-### 🛠️ Comandos de Troubleshooting
-
-```bash
-# Ver logs de WordPress
-kubectl logs deployment/cka-wordpress-deployment
-
-# Ver logs de MySQL
-kubectl logs deployment/cka-mysql-deployment
-
-# Describir un pod con problemas
-kubectl describe pod <nombre-del-pod>
-
-# Verificar eventos del clúster
-kubectl get events --sort-by=.metadata.creationTimestamp
-
-# Verificar el estado de los PVCs
-kubectl describe pvc mysql-pvc
-kubectl describe pvc wordpress-pvc
-
-# Probar conectividad entre pods
-kubectl exec -it deployment/cka-wordpress-deployment -- ping cka-mysql-service
-```
-
-### 🎯 Ejercicios Adicionales para CKA
-
-1. **Escalado**: Escala WordPress a 3 réplicas
+1. Obtén la IP de un nodo del clúster:
    ```bash
-   kubectl scale deployment cka-wordpress-deployment --replicas=3
+   kubectl get nodes -o wide
    ```
+2. Accede desde tu navegador a:  
+   `http://<IP_DEL_NODO>:30080`
 
-2. **Rolling Update**: Actualiza la imagen de WordPress
-   ```bash
-   kubectl set image deployment/cka-wordpress-deployment wordpress=wordpress:6.5-apache
-   ```
+---
 
-3. **Backup**: Crea un backup de los datos de MySQL
-   ```bash
-   kubectl exec deployment/cka-mysql-deployment -- mysqldump -u root -p<password> wordpress > backup.sql
-   ```
+## 🛠️ Troubleshooting y Comandos Útiles
 
-4. **Resource Limits**: Modifica los límites de recursos y vuelve a aplicar
+- Ver logs:
+  ```bash
+  kubectl logs deployment/wordpress -n prueba-con-wordpress
+  kubectl logs deployment/mysql -n prueba-con-wordpress
+  ```
+- Describir recursos:
+  ```bash
+  kubectl describe pod <nombre-pod> -n prueba-con-wordpress
+  kubectl describe pvc <nombre-pvc> -n prueba-con-wordpress
+  ```
+- Ver eventos:
+  ```bash
+  kubectl get events -n prueba-con-wordpress --sort-by=.metadata.creationTimestamp
+  ```
 
-5. **Network Policies**: Crea políticas de red para restringir el tráfico
+---
 
-### 🧹 Limpieza
+## 💡 Retos y Extensiones
 
-Para eliminar todos los recursos:
+- Escala WordPress a 2 o más réplicas y observa el comportamiento.
+- Añade sondas de liveness/readiness a los deployments.
+- Cambia la contraseña de la base de datos usando un nuevo Secret.
+- Realiza un backup de la base de datos desde el pod de MySQL.
+- Limita los recursos (CPU/memoria) de los pods.
 
-```bash
-# Eliminar todos los recursos creados
-kubectl delete -k .
+---
 
-# Verificar que todo se ha eliminado
-kubectl get all
-kubectl get pvc
-kubectl get secrets
-```
-
-### 📚 Conceptos Clave para el CKA
-
-- **Kustomize vs Helm**: Kustomize es nativo de kubectl
-- **Persistent Storage**: Diferencia entre PV y PVC
-- **Service Types**: ClusterIP vs NodePort vs LoadBalancer
-- **Deployment Strategies**: Recreate vs RollingUpdate
-- **Health Checks**: Liveness vs Readiness probes
-- **Resource Management**: Requests vs Limits
-
-### 🔗 Referencias Útiles
+## 📚 Recursos Recomendados
 
 - [Documentación oficial de Kubernetes](https://kubernetes.io/docs/)
-- [Guía de Kustomize](https://kustomize.io/)
-- [Ejemplos de CKA](https://github.com/kelseyhightower/kubernetes-the-hard-way)
+- [Kustomize](https://kustomize.io/)
+
+---
+
+> **Recuerda:** Practica los comandos, experimenta con los manifiestos y no dudes en romper y arreglar el entorno. ¡Así se aprende Kubernetes para el CKA!
+
+---
+
+**¡Mucho éxito y a practicar!**
 
