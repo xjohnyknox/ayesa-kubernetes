@@ -65,7 +65,9 @@ talleres/02/2-desplegando-wordpress/
 Puedes revisar todos los recursos que se crearán con:
 
 ```bash
-kubectl kustomize .
+kustomize create --autodetect  # Con este comando se generará un kustomization.yaml automáticamente
+
+kubectl kustomize . # Muestra los recursos que se crearán
 ```
 
 ### 3. Despliegue
