@@ -1,74 +1,73 @@
-# Ejercicio Final.
+# Examen Final - Kubernetes
 
-En este dia, tenemos los siguientes ejercicios:
+## Instrucciones
 
-- [Ejercicio Final.](#ejercicio-final)
-  - [Creando un Namespace:](#creando-un-namespace)
-  - [Creando un pod:](#creando-un-pod)
-  - [Creando un replicaset:](#creando-un-replicaset)
-  - [Creando un deployment:](#creando-un-deployment)
-  - [Crea un ServiceAccount:](#crea-un-serviceaccount)
-  - [Crea un ClusterRole](#crea-un-clusterrole)
-  - [Affinity Rules:](#affinity-rules)
-  - [Documentación:](#documentación)
+El examen final de nuestro curso, se realizará en este repositorio dedicado.
 
+### Proceso de entrega
 
+1. **Fork del repositorio**
+   - Realiza un fork del repositorio de examen a tu cuenta de GitHub
+   - Esto creará una copia del repositorio en tu cuenta personal
 
+2. **Crear rama personalizada**
+   - Crea una rama con el formato: `nombre-apellido`
+   - Ejemplo: `juan-perez`
 
-## Creando un Namespace:
+3. **Estructura del repositorio**
+   ```
+   /
+   ├── pregunta-1/
+   │   ├── README.md        # Descripción del ejercicio
+   │   └── respuesta/        # Aquí colocarás tus archivos YAML
+   ├── pregunta-2/
+   │   ├── README.md
+   │   └── respuesta/
+   └── ...
+   ```
 
-Crea un Namespace llamado `ejercicio-final`
+4. **Resolución de ejercicios**
+   - Cada carpeta `pregunta-X` contiene un README con las instrucciones específicas
+   - Coloca tus archivos YAML de solución en la carpeta `respuesta` correspondiente
+   - Asegúrate de seguir exactamente la estructura y nombres de archivos solicitados
 
-## Creando un pod:
+5. **Evaluación automática**
+   - Al crear el Pull Request (PR), se activarán automáticamente los GitHub Workflows
+   - Cada workflow evaluará un punto específico del examen
+   - Podrás ver el resultado de cada evaluación en la pestaña "Actions" del PR
+   - ✅ Verde: Punto correcto
+   - ❌ Rojo: Punto incorrecto (revisar los logs para ver el error)
 
-Crea un pod que use labels: 
-`ejercicio:final`
+6. **Envío final**
+   - Crea un Pull Request desde tu rama `nombre-apellido` hacia la rama `main` del repositorio original
+   - Título del PR: "Solución Examen - Nombre Apellido"
+   - No realices merge del PR, pues el instructor lo revisara con detalle, para saber si esta bien cada punto
 
-## Creando un replicaset:
+### Importante
 
-Crea un manifiesto para tener un RS, que se llame `gb-front-end`
-Y que use esta imagen: `gcr.io/google_samples/gb-frontend:v3`
-Y que tenga `3 replicas`.
+- No modifiques ningún archivo fuera de las carpetas `respuesta/`
+- Asegúrate de que todos tus archivos YAML sean válidos sintácticamente
+- Puedes realizar múltiples commits mientras trabajas
+- Los workflows se ejecutarán en cada push a tu rama
+- Tienes un máximo de 10 intentos por pregunta (10 push con correcciones)
 
+### Criterios de evaluación
 
-## Creando un deployment:
+- Funcionalidad correcta según los requisitos (validado por workflows)
+- Estructura y organización del código
+- Buenas prácticas de Kubernetes
+- Nomenclatura y consistencia
 
-Crea un deployment con 3 replicas, de la imagen nginx, con el comando sleep 3600.
+### Tiempo límite
 
-Que incluya el label: 
+- Tendrás 4 horas para completar el examen desde que hagas el primer commit
+- El timestamp del último commit válido será considerado como tiempo de entrega
 
-`tipo: deployment`
+### Recursos permitidos
 
-Y que se llame: `mi-deployment`
+- Documentación oficial de Kubernetes
+- Apuntes y ejercicios del curso
+- No está permitido copiar soluciones de otros estudiantes
 
+¡Éxito en tu examen!
 
-
-## Crea un ServiceAccount:
-
-Crea un **ServiceAccount** llamado "ejercicio-SA" dentro del namespace: `ejercicio-final`
-
-## Crea un ClusterRole
-
-Crea un **ClusterRole** llamado "ejercicio-clusterrole" que tenga permisos para listar, crear y borrar pods y servicios en **todos los namespaces**
-
-Aplica el Binding apropiado a ese ClusterRole para el ejercicio-SA y ejercicio-clusterrole
-
-
-## Affinity Rules:
-
-Crea 2 deployments asi:
-
-`app-deployment-1 con 1 replica de la imagen nginx, label: app = deployment1, tier=frontend`
-.
-`app-deployment-2 con 1 replica de la imagen nginx, label: app = deployment2, tier=backend`
-
-
-
-`Deployment 1` debe tener una regla anti-affinity para asegurarse que no corra en el nodo donde corra el `Deployment 2`.
-`Deployment 2` debe tener una regla de afinidad, para asegurarse que corra en el mismo nodo donde corra el `Deployment 1`.
-
-## Documentación:
-
-Proporcionar un archivo `PASOS.md` que explique lo que hiciste para lograr cada punto.
-
-> NOTA: Todo debe estar en la carpeta FINAL
