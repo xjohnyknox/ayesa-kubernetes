@@ -5,4 +5,4 @@ Crea un Deployment  llamado `api` para que:
 * use `nodeSelector: env=prod
 * tolere `maintenance=true:NoSchedule`
 
-Aplica tu parche en **respuesta.sh**.
+Aplica tu parche en **respuesta.txt**.

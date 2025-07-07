@@ -5,4 +5,4 @@
 Aplica el taint `maintenance=true:NoSchedule` al nodo `worker-01`.
 
 ### Entrega
-Implementa el comando en **respuesta.sh**.
+Implementa el comando en **respuesta.txt**.

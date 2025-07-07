@@ -3,7 +3,7 @@ Antes de una actualización mayor necesitas documentar el comando
 exacto para respaldar etcd.
 
 ## Tarea
-Escribe en **respuesta.sh** **(NO LO EJECUTES)** el comando `etcdctl`
+Escribe en **respuesta.txt** **(NO LO EJECUTES)** el comando `etcdctl`
 que tomaría un snapshot y lo guardaría en:
 `/tmp/etcd-backup.db`
 
