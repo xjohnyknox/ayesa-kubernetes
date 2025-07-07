@@ -11,8 +11,8 @@ Hacer fork al repo.
 
 Luego del fork si puedes clonar tu nuevo repositorio.
 
-Y sobre tu repo, guardar cambios y respuestas en:
-`./ejercicios/FINAL/`
+Y sobre tu repo, guardar cambios y respuestas en cada pregunta segun corresponda:
+`./ejercicios/FINAL/pregunta-#/respuesta.txt`
 
 Una vez tengas todos los manifiestos, vas a crear un PR sobre el repo original mio asi:
 
