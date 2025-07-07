@@ -1,12 +1,12 @@
 ## Descripción del Ejercicio
-Necesitas crear un PersistentVolume (PV) que use almacenamiento local en el nodo `cka-worker`, luego crear un PersistentVolumeClaim (PVC) que se vincule a este PV, y finalmente validar su funcionalidad montándolo en un pod.
+Necesitas crear un PersistentVolume (PV) que use almacenamiento local en el nodo `worker-01`, luego crear un PersistentVolumeClaim (PVC) que se vincule a este PV, y finalmente validar su funcionalidad montándolo en un pod.
 
 ⚠️ **Importante**: Este ejercicio simula el almacenamiento local típico en exámenes CKA donde no hay aprovisionamiento dinámico disponible.
 
 ## Tareas
 
 ### Tarea 1: Preparar el Directorio Local
-1. Acceder al nodo `cka-worker`
+1. Acceder al nodo `worker-01`
 2. Crear el directorio `/mnt/local-storage/data-pvc`
 3. Configurar permisos adecuados
 
@@ -21,7 +21,7 @@ Crea un PersistentVolume llamado `local-data-pv` con:
 - **StorageClass**: `local-storage`
 - **Modo de Acceso**: ReadWriteOnce
 - **Ruta local**: `/mnt/local-storage/data-pvc`
-- **Afinidad de nodo**: `cka-worker`
+- **Afinidad de nodo**: `worker-01`
 
 ### Tarea 4: Crear el PVC
 Crea un PersistentVolumeClaim llamado `data-pvc` con:
@@ -57,19 +57,19 @@ spec:
     persistentVolumeClaim:
       claimName: data-pvc
   nodeSelector:
-    kubernetes.io/hostname: cka-worker
+    kubernetes.io/hostname: worker-01
 ```
 
 ### Comandos de Verificación
 ```bash
-# Verificar que el pod esté corriendo en cka-worker
+# Verificar que el pod esté corriendo en worker-01
 kubectl get pod test-pod -o wide
 
 # Verificar contenido del archivo
 kubectl exec test-pod -- cat /data/test.txt
 
 # Verificar en el nodo directamente
-ssh cka-worker
+ssh worker-01
 cat /mnt/local-storage/data-pvc/test.txt
 ```
 
@@ -87,9 +87,9 @@ cat /mnt/local-storage/data-pvc/test.txt
 
 2. **PV no disponible**
    - **Causa**: Directorio no existe en el nodo o permisos incorrectos
-   - **Solución**: Verificar en el nodo cka-worker
+   - **Solución**: Verificar en el nodo worker-01
    ```bash
-   ssh cka-worker
+   ssh worker-01
    ls -la /mnt/local-storage/data-pvc
    ```
 
@@ -125,11 +125,11 @@ cat /mnt/local-storage/data-pvc/test.txt
 - Los volúmenes locales no son portables entre nodos
 
 ## Lista de Verificación
-- [ ] Directorio `/mnt/local-storage/data-pvc` existe en `cka-worker`
+- [ ] Directorio `/mnt/local-storage/data-pvc` existe en `worker-01`
 - [ ] StorageClass `local-storage` está creado
 - [ ] PV `local-data-pv` está disponible y usa el directorio correcto
 - [ ] PVC `data-pvc` está en estado "Bound"
-- [ ] Pod se ejecuta en el nodo `cka-worker`
+- [ ] Pod se ejecuta en el nodo `worker-01`
 - [ ] Los datos escritos al volumen son visibles en el nodo
 - [ ] Los datos persisten después de eliminar y recrear el pod
 
@@ -143,7 +143,7 @@ cat /mnt/local-storage/data-pvc/test.txt
 
 ## Preguntas de Aprendizaje Extendido
 1. ¿Qué sucede si eliminas el pod pero mantienes el PVC?
-2. ¿Qué pasa si el nodo `cka-worker` se vuelve inaccesible?
+2. ¿Qué pasa si el nodo `worker-01` se vuelve inaccesible?
 3. ¿Por qué es importante `WaitForFirstConsumer` en volúmenes locales?
 4. ¿Cómo migrarías los datos a otro nodo si fuera necesario?
 5. ¿Cuál es la diferencia entre `Retain`, `Recycle` y `Delete` en reclaim policies?
