@@ -2,7 +2,17 @@
 Una aplicación necesita almacenamiento persistente que se mantenga disponible incluso cuando los pods se reinicien. El almacenamiento debe tener un tamaño de 1Gi y utilizar la clase de almacenamiento predeterminada del clúster.
 
 ## Tareas a Realizar
-### Parte 1: Crear el PersistentVolumeClaim
+
+### Parte 1: Crear el PersistentVolume
+```yaml
+Nombre: app-storage
+Capacidad: 5Gi
+Modo de acceso: ReadWriteOnce
+Local-path: /mnt/local-storage/data-pvc
+NodeAffinity: key: kubernetes.io/hostname = node01
+```
+
+### Parte 2: Crear el PersistentVolumeClaim
 
 ```yaml
 Nombre: app-storage
